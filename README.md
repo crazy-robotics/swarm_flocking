@@ -10,7 +10,7 @@
 
 ---
 
-![Swarm Flocking Demo](media/swarm_flocking.gif)
+![Swarm Flocking Demo](swarm_flocking/media/swarm_flocking.gif)
 
 *5-drone flock converging on a migration target in Gazebo SITL — all vehicles arm, climb, and switch to Offboard autonomously on launch.*
 
