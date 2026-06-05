@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>swarm_flocking</name>
+  <version>1.0.0</version>
+  <description>
+    Autonomous drone swarm flocking package implementing the Vásárhelyi et al.
+    optimized flocking model (Science Robotics 2018) with formation control
+    (IROS 2014). Features decentralized control, evolutionary-optimized
+    parameters, wall/obstacle avoidance via shill agents, and comprehensive
+    safety monitoring over ROS2 DDS. Interfaces directly with PX4 autopilot
+    via px4_msgs and the Micro XRCE-DDS bridge.
+  </description>
+  <maintainer email="dev@swarm.io">Swarm Developer</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>builtin_interfaces</depend>
+  <depend>px4_msgs</depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

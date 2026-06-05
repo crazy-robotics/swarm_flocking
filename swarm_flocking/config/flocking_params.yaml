@@ -1,0 +1,64 @@
+# swarm_flocking default configuration
+# Parameter values from Vásárhelyi et al. (2018), Table S4
+# Tuned for real outdoor flights with precautionary safety margins.
+
+/**:
+  ros__parameters:
+    agent_id: 1                    # Override per drone via launch argument
+    control_rate_hz: 20.0          # Main control loop frequency
+    broadcast_rate_hz: 10.0        # DDS state broadcast rate (matches XBee+WiFi setup)
+
+    # ═══════════════════════════════════════════════════════════════════════
+    # Flocking parameters (Vásárhelyi 2018 Eq. 2-11, Table S4)
+    # ═══════════════════════════════════════════════════════════════════════
+    flock:
+      v_flock: 4.0                 # m/s — desired flocking speed
+      v_max: 6.0                   # m/s — absolute maximum speed
+      arena_size: 200.0            # m   — square arena side length
+      comm_range: 500.0            # m   — max communication range (>arena diagonal so all 5 agents always see each other)
+
+      # Repulsion (Eq. 2-3): half-spring model
+      # r_rep_0=15m is from Table S4 for large swarms (30+ drones, ~15m spacing).
+      # For 5-drone SITL the equilibrium separation should be ~3–5m so drones
+      # can cluster near a target without repulsion overwhelming migration.
+      r_rep_0: 5.0                 # m   — repulsion range (5m for tight 5-drone flock)
+      p_rep: 0.5                   # 1/s — repulsion gain
+
+      # Velocity alignment / friction (Eq. 4-7): braking-curve-based
+      # r_frict_0=45m is for large swarms; 15m is sufficient for 5 drones in 200m arena
+      r_frict_0: 15.0              # m   — stopping point offset
+      # C_frict=0.5 (Table S4 4 m/s) creates ~10 m/s alignment force with 4 neighbours,
+      # overwhelming the 5.6 m/s migration. Use 0.05 (paper's 16 m/s column):
+      # 4 × 0.05 × (5.6−1.5) = 0.82 m/s alignment << 5.6 m/s migration.
+      C_frict: 0.05                # -   — alignment coefficient (small for migration to win)
+      v_frict: 1.5                 # m/s — velocity slack (agents within 1.5 m/s never align)
+      p_frict: 1.0                 # 1/s — braking curve gain
+      a_frict: 3.0                 # m/s² — braking curve acceleration
+
+      # Wall / shill agent (Eq. 8-9)
+      r_shill_0: 0.0               # m   — wall stopping offset
+      v_shill: 10.0                # m/s — shill agent velocity
+      p_shill: 2.0                 # 1/s — wall braking gain
+      a_shill: 2.5                 # m/s² — wall braking acceleration
+
+    # ═══════════════════════════════════════════════════════════════════════
+    # Formation parameters (Vásárhelyi 2014, Eq. 6-8)
+    # ═══════════════════════════════════════════════════════════════════════
+    formation:
+      type: 0                      # 0=None, 1=Grid, 2=Ring, 3=Line
+      spacing: 10.0                # m — desired inter-agent distance
+      rotation_speed: 0.0          # m/s — tangential speed for rotating ring
+
+    # ═══════════════════════════════════════════════════════════════════════
+    # Safety parameters — multi-layered emergency handling
+    # ═══════════════════════════════════════════════════════════════════════
+    safety:
+      # Thresholds must be BELOW the flocking equilibrium separation distance (~7–15 m)
+      # or the safety filter will fight the flocking forces and freeze the swarm.
+      # With r_rep_0=15 m the flock naturally keeps agents 7–15 m apart — safety
+      # only needs to fire inside the physical danger zone (<5 m for SITL).
+      r_caution: 4.0               # m — advisory zone
+      r_warning: 3.0               # m — active avoidance zone
+      r_critical: 2.0              # m — emergency brake zone
+      r_panic: 1.0                 # m — PANIC/motor-cut zone; must be < PX4 SITL spawn spacing (~1.7 m)
+      max_speed_override: 12.0     # m/s — absolute hard speed limit

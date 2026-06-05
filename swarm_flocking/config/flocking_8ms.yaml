@@ -1,0 +1,21 @@
+# High-speed flocking configuration (8 m/s)
+# From Vásárhelyi et al. (2018), Table S4
+
+swarm_controller:
+  ros__parameters:
+    flock:
+      v_flock: 8.0
+      v_max: 10.0
+      arena_size: 260.0
+      comm_range: 80.0
+      r_rep_0: 50.0
+      p_rep: 0.1
+      r_frict_0: 80.0
+      C_frict: 0.5
+      v_frict: 2.0
+      p_frict: 1.0
+      a_frict: 3.0
+      r_shill_0: 30.0
+      v_shill: 14.0
+      p_shill: 2.0
+      a_shill: 2.5
